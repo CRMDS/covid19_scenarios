@@ -117,6 +117,7 @@ export function initializePopulation(N, numCases, t0, ages) {
       recovered: put(0),
       intensive: put(0),
       dead: put(0),
+      newDead: put(0),	
     }
   }
   const Z = Object.values(ages).reduce((a, b) => a + b)
@@ -132,6 +133,7 @@ export function initializePopulation(N, numCases, t0, ages) {
     intensive: {},
     recovered: {},
     dead: {},
+    newDead: {},  
   }
   // TODO: Ensure the sum is equal to N!
   Object.keys(ages).forEach((k, i) => {
@@ -146,6 +148,7 @@ export function initializePopulation(N, numCases, t0, ages) {
     pop.recovered[k] = 0
     pop.intensive[k] = 0
     pop.dead[k] = 0
+    pop.newDead[k] = 0  
     if (i === Math.round(Object.keys(ages).length / 2)) {
       pop.susceptible[k] -= numCases
       pop.infectious[k] = 0.3 * numCases
@@ -174,12 +177,17 @@ export function evolve(pop, P, sample) {
     discharged: {},
     intensive: {},
     dead: {},
+    newDead: {},  
   }
 
   const push = (sub, age, delta) => {
     newPop[sub][age] = pop[sub][age] + delta
   }
 
+  const pushdelta = (sub, age, delta) => {
+    newPop[sub][age] = delta
+  }
+    
   const newCases        = {};
   const newInfectious   = {};
   const newRecovered    = {};
@@ -217,7 +225,9 @@ export function evolve(pop, P, sample) {
     push('recovered', age, newRecovered[age] + newDischarged[age])
     push('intensive', age, newCritical[age])
     push('discharged', age, newDischarged[age])
+      
     push('dead', age, newICUDead[age] + newOverflowDead[age])
+    pushdelta('newDead', age, newICUDead[age] + newOverflowDead[age])      
   })
 
   // Move hospitalized patients according to constrained resources
@@ -258,7 +268,8 @@ export function evolve(pop, P, sample) {
   const popSum = sum(newPop.susceptible) + sum(newPop.exposed) + sum(newPop.infectious) + sum(newPop.recovered) + sum(newPop.hospitalized) + sum(newPop.critical) + sum(newPop.overflow) + sum(newPop.dead);
   console.log(math.abs(popSum - P.populationServed));
   */
-
+  console.log('newDead')
+  console.log(newPop.newDead);
   return newPop
 }
 
