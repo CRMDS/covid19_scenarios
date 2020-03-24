@@ -268,14 +268,16 @@ export function evolve(pop, P, sample) {
   const popSum = sum(newPop.susceptible) + sum(newPop.exposed) + sum(newPop.infectious) + sum(newPop.recovered) + sum(newPop.hospitalized) + sum(newPop.critical) + sum(newPop.overflow) + sum(newPop.dead);
   console.log(math.abs(popSum - P.populationServed));
   */
-  console.log('newDead')
-  console.log(newPop.newDead);
+  // console.log(newPop.newDead);
   return newPop
 }
 
 export function collectTotals(trajectory) {
-  // FIXME: parameter reassign
+    // FIXME: parameter reassign
+  const pop = {}  
   trajectory.forEach(d => {
+    const t = new Date(d.time).toISOString().slice(0, 10)
+    	
     Object.keys(d).forEach(k => {
       if (k === 'time' || 'total' in d[k]) {
         return
@@ -297,6 +299,8 @@ export function exportSimulation(trajectory) {
   const csv = [header.join('\t')]
 
   const pop = {}
+  let dead = 0
+  let nd = 0  
   trajectory.forEach(d => {
     const t = new Date(d.time).toISOString().slice(0, 10)
     if (t in pop) {
@@ -308,7 +312,15 @@ export function exportSimulation(trajectory) {
       if (k === 'time') {
         buf += `${t}`
       } else {
-        buf += `\t${Math.round(d[k].total)}`
+	  if (k === 'dead') {
+	    nd = Math.round(d[k].total - dead)
+	    dead = Math.round(d[k].total)  
+	    buf += `\t${Math.round(d[k].total)}`
+	  } else if (k === 'newDead')  {
+	    buf += `\t${nd}`
+	} else {  
+          buf += `\t${Math.round(d[k].total)}`
+	}
       }
     })
     csv.push(buf)
