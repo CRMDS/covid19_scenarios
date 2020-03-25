@@ -2,6 +2,7 @@
   COVID-19 Scenarios
 </h1>
 
+
 <p align="center">
   <a href="https://neherlab.org/covid19/">
     <img
@@ -19,11 +20,7 @@
   </a>
 </p>
 
-<blockquote>
-  <p align="center">
-    Tool that models hospital demand during COVID-19 outbreak
-  </p>
-</blockquote>
+
 
 <h1 align="center" />
 
@@ -210,7 +207,40 @@ Input data for the tool and the basic parameters of the populations are collecte
 [neherlab/covid19_scenarios_data](https://github.com/neherlab/covid19_scenarios_data). Please add data on populations
 and parsers of publicly available case count data there.
 
+### User Guide 
+
+The online application provides a friendly user interface with drop downs to choose model parameters, run the model, and export results in CSV format. A detailed process is below. 
+
+#### Population Parameters 
+
+Select the population drop down and select a country/region to auto-populate the model's parameters with respective UN population data. These parameters can be indivdually updated manually if necessary. 
+
+#### Epidemiology Parameters 
+
+The preset epidemiology parameters are a combination of speed and region - specifying growth rate, seasonal variation, and duration of hospital stay. To choose a preset distribution, select one of the options from the epidemiology drop down to auto-populate the model's parameters with the selected parameters. 
+
+#### Mitigation Parameters 
+
+Mitigation parameters represent the reduction of transmission through mitigation measures over time. To select a preset, click on the mitigation dropdown and select one of the options. Otherwise, the points on the graph can be dragged and moved with the mouse. The parameter ranges from one (no infection control) to zero (complete prevention of all transmission).
+
+#### Running the Model
+
+Once the correct parameters are inputted, select the run button located in the Results section of the application. The model output will be displayed in 2 graphs: Cases through time and Distribution across groups and 2 tables: Populations and Totals/Peak.
+
+#### Exporting Results
+
+The model's results can be exported in CSV format by clicking the "export" button in the right hand corner. 
+
+
 ### Development
+
+#### Code Stack
+
+TODO
+
+#### Code Examples
+
+TODO
 
 #### Install requirements
 
@@ -248,7 +278,94 @@ TODO
 
 TODO
 
-### License
+## Acknowledgements
+
+### Initial development
+
+Initially, the development was started in the [Research group of Richard Neher](https://neherlab.org) at the
+[Biozentrum, University of Basel](https://www.biozentrum.unibas.ch/home/) (Basel, Switzerland) by Richard Neher
+([@rneher](https://github.com/rneher)), Ivan Aksamentov ([@ivan-aksamentov](https://github.com/ivan-aksamentov)) and
+Nicholas Noll ([@nnoll](https://github.com/nnoll)).
+
+[Jan Albert](https://ki.se/en/mtc/jan-albert-group) from [Karolinska Institute](https://ki.se/en) (Stockholm, Sweden)
+had the initial idea to develop this tool and suggested features and parameters, and
+[Robert Dyrdak](https://staff.ki.se/people/robdyr) provided initial parameter estimates.
+
+<table>
+<tr>
+<td align="center">
+<a href="https://neherlab.org/">
+<img src="https://avatars3.githubusercontent.com/u/8379168?v=4" width="100px;" alt="" />
+<br />
+<sub><b>Richard Neher</b></sub>
+<br />
+<sub><a href="https://github.com/rneher">@rneher</a></sub>
+</a>
+</td>
+
+<td align="center">
+<a href="https://github.com/ivan-aksamentov">
+<img src="https://avatars0.githubusercontent.com/u/9403403?v=4" width="100px;" alt="" />
+<br />
+<sub><b>Ivan Aksamentov</b></sub>
+<br />
+<sub><a href="https://github.com/ivan-aksamentov">@ivan-aksamentov</a></sub>
+</a>
+</td>
+
+<td align="center">
+<a href="https://neherlab.org/nicholas-noll.html">
+<img src="https://avatars3.githubusercontent.com/u/29447707?v=4" width="100px;" alt="" />
+<br />
+<sub><b>Nicholas Noll</b></sub>
+<br />
+<sub><a href="https://github.com/nnoll">@nnoll</a></sub>
+</a>
+</td>
+
+<td align="center">
+<a href="https://ki.se/en/mtc/jan-albert-group">
+<img src="https://user-images.githubusercontent.com/9403403/77488039-5ca6a000-6e34-11ea-999a-9a1d1783e3da.jpg" width="100px;" alt="" />
+<br />
+<sub><b>Jan Albert</b></sub>
+<br />
+<sub><a href=""> </a></sub>
+</a>
+</td>
+
+<td align="center">
+<a href="https://staff.ki.se/people/robdyr">
+<img src="https://user-images.githubusercontent.com/9403403/77488041-5dd7cd00-6e34-11ea-996c-1482ee0cc669.jpg" width="100px;" alt="" />
+<br />
+<sub><b>Robert Dyrdak</b></sub>
+<br />
+<sub><a href=""> </a></sub>
+</a>
+</td>
+
+</tr>
+</table>
+
+### Contributors ✨
+
+We are thankful to all our contributors, no matter how they contribute: in ideas, science, code, documentation or
+otherwise. Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+TODO: generate a table of contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
+Contributions of any kind welcome!
+
+## License
 
 [MIT License](LICENSE)
 
