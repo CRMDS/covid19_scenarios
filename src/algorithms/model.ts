@@ -146,6 +146,7 @@ export function initializePopulation(
       intensive: put(0),
       dead: put(0),
       overflow: put(0),
+      newDead: put(0),	
     }
   }
   const Z = Object.values(ages).reduce((a, b) => a + b)
@@ -161,6 +162,7 @@ export function initializePopulation(
     intensive: {},
     recovered: {},
     dead: {},
+    newDead: {},    
   }
   // TODO: Ensure the sum is equal to N!
   Object.keys(ages).forEach((k, i) => {
@@ -175,6 +177,7 @@ export function initializePopulation(
     pop.recovered[k] = 0
     pop.intensive[k] = 0
     pop.dead[k] = 0
+    pop.newDead[k] = 0  
     if (i === Math.round(Object.keys(ages).length / 2)) {
       pop.susceptible[k] -= numCases
       pop.infectious[k] = 0.3 * numCases
@@ -208,6 +211,7 @@ export function evolve(pop: SimulationTimePoint, P: ModelParams, sample: (x: num
     discharged: {},
     intensive: {},
     dead: {},
+    newDead: {},  
   }
 
   const push = <Sub extends NumberRecordKeys<SimulationTimePoint>>(sub: Sub, age: string, delta: number) => {
@@ -215,6 +219,13 @@ export function evolve(pop: SimulationTimePoint, P: ModelParams, sample: (x: num
     // There is possibly a better solution
     const record: Record<string, number> = newPop[sub]
     record[age] = pop[sub][age] + delta
+  }
+
+  const pushdelta = <Sub extends NumberRecordKeys<SimulationTimePoint>>(sub: Sub, age: string, delta: number) => {
+    // To get TS to type check this function, we need first assign newPop[sub] to Record<string, number>
+    // There is possibly a better solution
+    const record: Record<string, number> = newPop[sub]
+    record[age] = delta
   }
 
   const newCases: Record<string, number> = {}
@@ -278,6 +289,7 @@ export function evolve(pop: SimulationTimePoint, P: ModelParams, sample: (x: num
       age,
       newHospitalized[age] + newStabilized[age] + newOverflowStabilized[age] - newDischarged[age] - newCritical[age],
     )
+    pushdelta('newDead', age, newICUDead[age] + newOverflowDead[age])      
     // Cumulative categories
     push('recovered', age, newRecovered[age] + newDischarged[age])
     push('intensive', age, newCritical[age])
@@ -354,7 +366,9 @@ export function exportSimulation(trajectory: SimulationTimePoint[]) {
   const header = keys(trajectory[0])
   const csv = [header.join('\t')]
 
-  const pop: Record<string, boolean> = {}
+  const pop = {}
+  let dead = 0
+  let nd = 0  
   trajectory.forEach(d => {
     const t = new Date(d.time).toISOString().slice(0, 10)
     if (t in pop) {
@@ -366,7 +380,15 @@ export function exportSimulation(trajectory: SimulationTimePoint[]) {
       if (k === 'time') {
         buf += `${t}`
       } else {
-        buf += `\t${Math.round(d[k].total)}`
+	  if (k === 'dead') {
+	    nd = Math.round(d[k].total - dead)
+	    dead = Math.round(d[k].total)  
+	    buf += `\t${Math.round(d[k].total)}`
+	  } else if (k === 'newDead')  {
+	    buf += `\t${nd}`
+	} else {  
+          buf += `\t${Math.round(d[k].total)}`
+	}
       }
     })
     csv.push(buf)
