@@ -68,7 +68,6 @@ export default async function run(
     while (dynamics[dynamics.length - 1].time < tMax) {
       const pop = dynamics[dynamics.length - 1]
       dynamics.push(evolve(pop, modelParams, func))
-      // console.log(dynamics)
     }
 
     return collectTotals(dynamics)
