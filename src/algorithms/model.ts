@@ -146,6 +146,7 @@ export function initializePopulation(
       intensive: put(0),
       dead: put(0),
       overflow: put(0),
+      mortuary: put(0),	
       newDead: put(0),	
     }
   }
@@ -158,6 +159,7 @@ export function initializePopulation(
     hospitalized: {},
     critical: {},
     overflow: {},
+    mortuary: {},  
     discharged: {},
     intensive: {},
     recovered: {},
@@ -173,6 +175,7 @@ export function initializePopulation(
     pop.hospitalized[k] = 0
     pop.critical[k] = 0
     pop.overflow[k] = 0
+    pop.mortuary[k] = 0  
     pop.discharged[k] = 0
     pop.recovered[k] = 0
     pop.intensive[k] = 0
@@ -208,6 +211,7 @@ export function evolve(pop: SimulationTimePoint, P: ModelParams, sample: (x: num
     hospitalized: {},
     critical: {},
     overflow: {},
+    mortuary: {},  
     discharged: {},
     intensive: {},
     dead: {},
@@ -289,7 +293,8 @@ export function evolve(pop: SimulationTimePoint, P: ModelParams, sample: (x: num
       age,
       newHospitalized[age] + newStabilized[age] + newOverflowStabilized[age] - newDischarged[age] - newCritical[age],
     )
-    pushdelta('newDead', age, newICUDead[age] + newOverflowDead[age])      
+    pushdelta('newDead', age, newICUDead[age] + newOverflowDead[age])
+    push('mortuary', age, 0)  
     // Cumulative categories
     push('recovered', age, newRecovered[age] + newDischarged[age])
     push('intensive', age, newCritical[age])
@@ -368,7 +373,13 @@ export function exportSimulation(trajectory: SimulationTimePoint[]) {
 
   const pop = {}
   let dead = 0
-  let nd = 0  
+  let nd = 0
+  let mortuary = Array()
+  const mstay = 3
+  for (let i=0; i<mstay; i++) {
+    mortuary.push(0)
+  }
+    
   trajectory.forEach(d => {
     const t = new Date(d.time).toISOString().slice(0, 10)
     if (t in pop) {
@@ -376,6 +387,7 @@ export function exportSimulation(trajectory: SimulationTimePoint[]) {
     } // skip if date is already in table
     pop[t] = true
     let buf = ''
+    let s = 0  
     header.forEach(k => {
       if (k === 'time') {
         buf += `${t}`
@@ -386,9 +398,14 @@ export function exportSimulation(trajectory: SimulationTimePoint[]) {
 	    buf += `\t${Math.round(d[k].total)}`
 	  } else if (k === 'newDead')  {
 	    buf += `\t${nd}`
-	} else {  
-          buf += `\t${Math.round(d[k].total)}`
-	}
+	    mortuary.shift()
+	    mortuary.push(nd)  
+	  } else if (k === 'mortuary') {
+	    s = mortuary.reduce((a, b) => a + b, 0)
+	    buf += `\t${s}`  
+	  } else {  
+            buf += `\t${Math.round(d[k].total)}`
+	  }
       }
     })
     csv.push(buf)
