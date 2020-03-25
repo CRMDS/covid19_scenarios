@@ -7,6 +7,7 @@ export interface SimulationTimePoint {
   hospitalized: Record<string, number>
   critical: Record<string, number>
   overflow: Record<string, number>
+  newDead: Record<string, number>
   // Cumulative categories
   recovered: Record<string, number>
   discharged: Record<string, number>
